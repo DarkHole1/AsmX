@@ -1,30 +1,17 @@
 const fs = require('fs');
-const readline = require('readline');
-
 const Parser = require('./parser');
 const Compiler = require('./compiler');
+const { argv, exit } = require('process');
 
 print = (message, callback) => process.stdout.write(message, callback);
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+if (argv.length < 1) {
+    print("USAGE: node src/kernel.js file.asmX");
+    exit(1);
+}
 
-print('COMPILER x64 asm');
-rl.question('MarsX file compiler asmX ~' , (answer) => {
-    print(answer);
-    
-    if (answer.endsWith('.asmx') || answer.endsWith('.asmX')) {
-        print('\nCOMPILING asmX FILE...\n');
-
-        new CompilerAsmX({ src: answer });
-
-        rl.close();
-    } else {
-        print('\nINVALID EXTENSION FILE\n');
-    }
-});
+let fname = argv[1];
+new CompilerAsmX({ src: fname });
 
 
 class CompilerAsmX {
