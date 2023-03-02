@@ -11,14 +11,7 @@ class Parser {
         let newLines = [];
         let isInterpreteProccess = Switching.setState(true);
 
-        lines = lines.map(line => line.indexOf(';') >= 0 ? line.split(';') : line);
-
-        lines.forEach((line) => {
-            if (Array.isArray(line))
-                for (let idx = 0, len = line.length; idx < len; idx++)  newLines.push(line[idx]);
-            else
-                newLines.push(line);
-        });
+        lines = lines.flatMap(line => line.split(';'));
 
         lines = newLines;
 
