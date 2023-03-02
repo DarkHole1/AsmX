@@ -8,7 +8,6 @@ class Parser {
     static parse(sourceCode) {
         let lines = sourceCode.split('\n');
         let tokens = [];
-        let isInterpreteProccess = Switching.setState(true);
         lines = lines.flatMap(line => line.split(';'));
 
         ParserCycle: for (let index = 0; index < lines.length; index++) {
@@ -16,8 +15,7 @@ class Parser {
 
             if (line.length === 0) continue;
 
-            if (isInterpreteProccess.state && Validator.isUnitStatement(line)) {
-                isInterpreteProccess.setState(false);
+            if (Validator.isUnitStatement(line)) {
                 let unit = this.parseUnitStatement(line);
                 let unitBody = [];
                 if (unit == 'rejected' || line.length === 0) break ParserCycle;
@@ -30,101 +28,100 @@ class Parser {
                 }
 
                 tokens.push({ unit: unitBody });
-                isInterpreteProccess.setState(true);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isImportStatement(line)) {
+            if (Validator.isImportStatement(line)) {
                 let alias = this.parseImportStatement(line);
                 if (alias == 'rejected') { break ParserCycle; } else tokens.push(alias);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isReturnStatement(line)) {
+            if (Validator.isReturnStatement(line)) {
                 let ret = this.parseReturnStatement(line);
                 if (ret == 'rejected') { break ParserCycle; } else tokens.push(ret);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isCallStatement(line)) {
+            if (Validator.isCallStatement(line)) {
                 let call = this.parseCallStatement(line);
                 if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isIssueStatement(line)) {
+            if (Validator.isIssueStatement(line)) {
                 let issue = this.parseIssueStatement(line);
                 if (issue == 'rejected') { break ParserCycle; } else tokens.push(issue);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isSetDeclaration(line)) {
+            if (Validator.isSetDeclaration(line)) {
                 let set = this.parseSetStatement(line)
                 if (set == 'rejected') { break ParserCycle; } else tokens.push(set);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isInvokeStatement(line)) {
+            if (Validator.isInvokeStatement(line)) {
                 let invoke = this.parseInvokeStatement(line);
                 if (invoke == 'rejected') { break ParserCycle; } else tokens.push(invoke);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isMemoryInvokeStatement(line)) {
+            if (Validator.isMemoryInvokeStatement(line)) {
                 let memory = this.parseMemoryInvoke(line);
                 if (memory == 'rejected') { break ParserCycle; } else tokens.push(memory);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isAddressInvokeStatement(line)) {
+            if (Validator.isAddressInvokeStatement(line)) {
                 let address = this.parseAddressInvoke(line);
                 if (address == 'rejected') { break ParserCycle; } else tokens.push(address);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isRouteStatement(line)) {
+            if (Validator.isRouteStatement(line)) {
                 let route = this.parseRouteStatement(line);
                 if (route == 'rejected') { break ParserCycle; } else tokens.push(route);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isStackStatement(line)) {
+            if (Validator.isStackStatement(line)) {
                 let stack = this.parseStackStatement(line);
                 if (stack == 'rejected') { break ParserCycle; } else tokens.push(stack);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isAddStatement(line)) {
+            if (Validator.isAddStatement(line)) {
                 let add = this.parseAddStatement(line);
                 if (add == 'rejected') { break ParserCycle; } else tokens.push(add);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isSubStatement(line)) {
+            if (Validator.isSubStatement(line)) {
                 let sub = this.parseSubStatement(line);
                 if (sub == 'rejected') { break ParserCycle; } else tokens.push(sub);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isCallStatement(line)) {
+            if (Validator.isCallStatement(line)) {
                 let call = this.parseCallStatement(line);
                 if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isEqualStatement(line)) {
+            if (Validator.isEqualStatement(line)) {
                 let equal = this.parseEqualityStatement(line);
                 if (equal == 'rejected') { break ParserCycle; } else tokens.push(equal);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isDivStatement(line)) {
+            if (Validator.isDivStatement(line)) {
                 let div = this.parseDivStatement(line);
                 if (div == 'rejected') { break ParserCycle; } else tokens.push(div);
                 continue;
             }
 
-            if (isInterpreteProccess.state && Validator.isModStatement(line)) {
+            if (Validator.isModStatement(line)) {
                 let mod = this.parseModStatement(line);
                 if (mod == 'rejected') { break ParserCycle; } else tokens.push(mod);
                 continue;
