@@ -8,12 +8,8 @@ class Parser {
     static parse(sourceCode) {
         let lines = sourceCode.split('\n');
         let tokens = [];
-        let newLines = [];
         let isInterpreteProccess = Switching.setState(true);
-
         lines = lines.flatMap(line => line.split(';'));
-
-        lines = newLines;
 
         ParserCycle: for (let index = 0; index < lines.length; index++) {
             const line = lines[index].trim();
