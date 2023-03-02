@@ -2,7 +2,6 @@ const { TypeError } = require("./anatomics.errors");
 const ValidatorByType = require("./checker");
 const Lexer = require("./lexer");
 const Switching = require("./switching");
-const Token = require("./tokens");
 const Validator = require("./validator");
 
 class Parser {
