@@ -1,20 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
-const path = require('path');
-const ProgressBar = require('progress');
 
 const Parser = require('./parser');
-const Color = require('./utils/color');
 const Compiler = require('./compiler');
 
 print = (message, callback) => process.stdout.write(message, callback);
-
-let progressBar = new ProgressBar(`[${Color.FG_CYAN}:bar${Color.RESET}] :percent :etas`, {
-    complete: '#',
-    incomplete: ' ',
-    width: 20,
-    total: 100
-});
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -28,11 +18,7 @@ rl.question('MarsX file compiler asmX ~' , (answer) => {
     if (answer.endsWith('.asmx') || answer.endsWith('.asmX')) {
         print('\nCOMPILING asmX FILE...\n');
 
-        let timer = setInterval(() => {
-            progressBar.tick();
-            progressBar.complete && new CompilerAsmX({ src: answer });
-            progressBar.complete && clearInterval(timer);
-        }, 10);
+        new CompilerAsmX({ src: answer });
 
         rl.close();
     } else {
