@@ -10,13 +10,12 @@ const { Memory, MemoryAddress, MemoryVariables } = require("./memory");
 const Parser = require('./parser');
 const Route = require("./route");
 const Stack = require("./stack");
-const Switching = require("./switching");
 const unitCall = require('./unit.call');
 
 class Compiler {
     constructor(AbstractSyntaxTree) {
         this.AbstractSyntaxTree = AbstractSyntaxTree;
-        this.isIssue = Switching.setState(false);
+        this.isIssue = false;
         this.scope = arguments[1] || 'global';
         this.argsScopeLocal = arguments[2] || {};
         this.set = [];
@@ -57,92 +56,92 @@ class Compiler {
             }
 
             if (trace?.invoke){
-                Switching.state && process.stdout.write(Issues.INVOKE_EVENT);
+                this.isIssue && process.stdout.write(Issues.INVOKE_EVENT);
                 this.compileInvoke(trace.invoke);
                 continue;
             }
 
             if (trace?.unit){
-                Switching.state && process.stdout.write(Issues.CREATE_UNIT_EVENT);
+                this.isIssue && process.stdout.write(Issues.CREATE_UNIT_EVENT);
                 this.compilerUnitStatement(trace);
                 continue;
             }
 
             if (trace?.call){
-                Switching.state && process.stdout.write(Issues.CALL_EVENT);
+                this.isIssue && process.stdout.write(Issues.CALL_EVENT);
                 this.compilerCallUnit(trace.call);
                 continue;
             }
 
             if (trace?.ret){
-                Switching.state && process.stdout.write(Issues.RET_EVENT);
+                this.isIssue && process.stdout.write(Issues.RET_EVENT);
                 this.compilerRet(trace.ret);
                 continue;
             }
 
             if (trace?.import){
-                Switching.state && process.stdout.write(Issues.IMPORT_EVENT);
+                this.isIssue && process.stdout.write(Issues.IMPORT_EVENT);
                 this.compilerImport(trace.import);
                 continue;
             }
 
             if (trace?.set){
-                Switching.state && process.stdout.write(Issues.SET_EVENT);
+                this.isIssue && process.stdout.write(Issues.SET_EVENT);
                 this.compilerSetStatement(trace.set);
                 continue;
             }
 
             if (trace?.memory){
-                Switching.state && process.stdout.write(Issues.MEMORY_EVENT);
+                this.isIssue && process.stdout.write(Issues.MEMORY_EVENT);
                 this.compilerMemory(trace.memory);
                 continue;
             }
 
             if (trace?.address){
-                Switching.state && process.stdout.write(Issues.ADDRESS_EVENT);
+                this.isIssue && process.stdout.write(Issues.ADDRESS_EVENT);
                 this.compilerAddress(trace.address);
                 continue;
             }
 
             if (trace?.route){
-                Switching.state && process.stdout.write(Issues.ROUTE_EVENT);
+                this.isIssue && process.stdout.write(Issues.ROUTE_EVENT);
                 this.compilerRoute(trace.route);
                 continue;
             }
 
             if (trace?.stack){
-                Switching.state && process.stdout.write(Issues.STACK_EVENT);
+                this.isIssue && process.stdout.write(Issues.STACK_EVENT);
                 this.compilerStack(trace.stack);
                 continue;
             }
 
             if (trace?.add){
-                Switching.state && process.stdout.write(Issues.ADD_EVENT);
+                this.isIssue && process.stdout.write(Issues.ADD_EVENT);
                 this.compilerAddStatement(trace.add);
                 continue;
             }
 
             if (trace?.sub){
-                Switching.state && process.stdout.write(Issues.SUB_EVENT);
+                this.isIssue && process.stdout.write(Issues.SUB_EVENT);
                 this.compilerSubStatement(trace.sub);
                 continue;
             }
 
 
             if (trace?.equal){
-                Switching.state && process.stdout.write(Issues.EQUALITY_EVENT);
+                this.isIssue && process.stdout.write(Issues.EQUALITY_EVENT);
                 this.compilerEquality(trace.equal);
                 continue;
             }
 
             if (trace?.div) {
-                Switching.state && process.stdout.write(Issues.MATCH_DIV_EVENT);
+                this.isIssue && process.stdout.write(Issues.MATCH_DIV_EVENT);
                 this.compilerDivStatement(trace.div);
                 continue;
             }
 
             if (trace?.mod) {
-                Switching.state && process.stdout.write(Issues.MATCH_MOD_EVENT);
+                this.isIssue && process.stdout.write(Issues.MATCH_MOD_EVENT);
                 this.compilerModStatement(trace.mod);
                 continue;
             }
@@ -425,7 +424,7 @@ class Compiler {
     compileIssue(statement) {
        this.$arg0 = statement.state;
        process.stdout.write(Issues.ISSUES_DEFINE_STATUS);
-       statement.state == 'true' ? Switching.setState(true) : Switching.setState(false);
+       this.isIssue = statement.state == 'true';
     }
 
 
