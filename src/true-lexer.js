@@ -52,20 +52,6 @@ module.exports = function lexer(source) {
             tokens.push({ type: "keyword", keyword: match[0].toLowerCase() });
             continue;
         }
-        // Identifier (can't start from digit)
-        match = current.match(/^[A-Z][A-Z0-9]*/i)
-        if (match) {
-            current = current.slice(match[0].length);
-            tokens.push({ type: "identifier", text: match[0] });
-            continue;
-        }
-        // Variable (or wtf)
-        match = current.match(/^\$[A-Z][A-Z0-9]*/i)
-        if (match) {
-            current = current.slice(match[0].length);
-            tokens.push({ type: "variable", text: match[0] });
-            continue;
-        }
         // Number literal
         match = current.match(/^(0x\d+|\d+)/i)
         if (match) {
@@ -85,6 +71,20 @@ module.exports = function lexer(source) {
         if (match) {
             current = current.slice(match[0].length);
             tokens.push({ type: "literal", value: match[1] });
+            continue;
+        }
+        // Identifier (can't start from digit)
+        match = current.match(/^[A-Z][A-Z0-9]*/i)
+        if (match) {
+            current = current.slice(match[0].length);
+            tokens.push({ type: "identifier", text: match[0] });
+            continue;
+        }
+        // Variable (or wtf)
+        match = current.match(/^\$[A-Z][A-Z0-9]*/i)
+        if (match) {
+            current = current.slice(match[0].length);
+            tokens.push({ type: "variable", text: match[0] });
             continue;
         }
         // Blah blah blah

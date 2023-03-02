@@ -13,7 +13,8 @@ if (argv.length < 3) {
 
 let fname = argv[2];
 let fileContents = fs.readFileSync(fname, { encoding: 'utf8' });
-let tokens = lexer(fileContents);
+const tokens = lexer(fileContents);
 console.log(tokens);
-let parser = Parser.parse(fileContents);
-new Compiler(parser);
+const ast = Parser.parse(fileContents, tokens);
+console.log(ast);
+new Compiler(ast);

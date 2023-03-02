@@ -4,130 +4,129 @@ const Lexer = require("./lexer");
 const Validator = require("./validator");
 
 class Parser {
-    static parse(sourceCode) {
+    static parse(sourceCode, tokens) {
         let lines = sourceCode.split('\n');
-        let tokens = [];
+        let ast = {
+            type: "Program",
+            body: []
+        };
+        let current = tokens;
         lines = lines.flatMap(line => line.split(';'));
 
-        ParserCycle: for (let index = 0; index < lines.length; index++) {
-            const line = lines[index].trim();
-
-            if (line.length === 0) continue;
-
-            if (Validator.isUnitStatement(line)) {
-                let unit = this.parseUnitStatement(line);
-                let unitBody = [];
-                if (unit == 'rejected' || line.length === 0) break ParserCycle;
-                let fixedLine = index;
-
-                UnitCycle: for (let idx = fixedLine, len = lines.length; idx < len; idx++) {
-                    let lineUnit = lines[idx].trim();
-                    if (lineUnit.length === 0) break UnitCycle
-                    else unitBody.push(lineUnit), lines[idx] = '';
-                }
-
-                tokens.push({ unit: unitBody });
+        while (current.length > 0) {
+            if (current[0].type == 'semicolon' || current[0].type == 'comment') {
+                current = current.slice(1);
                 continue;
             }
 
-            if (Validator.isImportStatement(line)) {
-                let alias = this.parseImportStatement(line);
-                if (alias == 'rejected') { break ParserCycle; } else tokens.push(alias);
+            let [subAst, newCurrent] = this.parseUnitStatement(current);
+            if (subAst) {
+                current = newCurrent;
+                ast.body.push(subAst);
                 continue;
             }
 
-            if (Validator.isReturnStatement(line)) {
-                let ret = this.parseReturnStatement(line);
-                if (ret == 'rejected') { break ParserCycle; } else tokens.push(ret);
+            // if (Validator.isImportStatement(current)) {
+            //     let alias = this.parseImportStatement(current);
+            //     if (alias == 'rejected') { break ParserCycle; } else ast.push(alias);
+            //     continue;
+            // }
+
+            // if (Validator.isReturnStatement(current)) {
+            //     let ret = this.parseReturnStatement(current);
+            //     if (ret == 'rejected') { break ParserCycle; } else ast.push(ret);
+            //     continue;
+            // }
+
+            // if (Validator.isCallStatement(current)) {
+            //     let call = this.parseCallStatement(current);
+            //     if (call == 'rejected') { break ParserCycle; } else ast.push(call);
+            //     continue;
+            // }
+
+            [subAst, newCurrent] = this.parseIssueStatement(current);
+            if (subAst) {
+                current = newCurrent;
+                ast.body.push(subAst);
                 continue;
             }
 
-            if (Validator.isCallStatement(line)) {
-                let call = this.parseCallStatement(line);
-                if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
-                continue;
-            }
+            // if (Validator.isSetDeclaration(current)) {
+            //     let set = this.parseSetStatement(current)
+            //     if (set == 'rejected') { break ParserCycle; } else ast.push(set);
+            //     continue;
+            // }
 
-            if (Validator.isIssueStatement(line)) {
-                let issue = this.parseIssueStatement(line);
-                if (issue == 'rejected') { break ParserCycle; } else tokens.push(issue);
-                continue;
-            }
+            // if (Validator.isInvokeStatement(current)) {
+            //     let invoke = this.parseInvokeStatement(current);
+            //     if (invoke == 'rejected') { break ParserCycle; } else ast.push(invoke);
+            //     continue;
+            // }
 
-            if (Validator.isSetDeclaration(line)) {
-                let set = this.parseSetStatement(line)
-                if (set == 'rejected') { break ParserCycle; } else tokens.push(set);
-                continue;
-            }
+            // if (Validator.isMemoryInvokeStatement(current)) {
+            //     let memory = this.parseMemoryInvoke(current);
+            //     if (memory == 'rejected') { break ParserCycle; } else ast.push(memory);
+            //     continue;
+            // }
 
-            if (Validator.isInvokeStatement(line)) {
-                let invoke = this.parseInvokeStatement(line);
-                if (invoke == 'rejected') { break ParserCycle; } else tokens.push(invoke);
-                continue;
-            }
+            // if (Validator.isAddressInvokeStatement(current)) {
+            //     let address = this.parseAddressInvoke(current);
+            //     if (address == 'rejected') { break ParserCycle; } else ast.push(address);
+            //     continue;
+            // }
 
-            if (Validator.isMemoryInvokeStatement(line)) {
-                let memory = this.parseMemoryInvoke(line);
-                if (memory == 'rejected') { break ParserCycle; } else tokens.push(memory);
-                continue;
-            }
+            // if (Validator.isRouteStatement(current)) {
+            //     let route = this.parseRouteStatement(current);
+            //     if (route == 'rejected') { break ParserCycle; } else ast.push(route);
+            //     continue;
+            // }
 
-            if (Validator.isAddressInvokeStatement(line)) {
-                let address = this.parseAddressInvoke(line);
-                if (address == 'rejected') { break ParserCycle; } else tokens.push(address);
-                continue;
-            }
+            // if (Validator.isStackStatement(current)) {
+            //     let stack = this.parseStackStatement(current);
+            //     if (stack == 'rejected') { break ParserCycle; } else ast.push(stack);
+            //     continue;
+            // }
 
-            if (Validator.isRouteStatement(line)) {
-                let route = this.parseRouteStatement(line);
-                if (route == 'rejected') { break ParserCycle; } else tokens.push(route);
-                continue;
-            }
+            // if (Validator.isAddStatement(current)) {
+            //     let add = this.parseAddStatement(current);
+            //     if (add == 'rejected') { break ParserCycle; } else ast.push(add);
+            //     continue;
+            // }
 
-            if (Validator.isStackStatement(line)) {
-                let stack = this.parseStackStatement(line);
-                if (stack == 'rejected') { break ParserCycle; } else tokens.push(stack);
-                continue;
-            }
+            // if (Validator.isSubStatement(current)) {
+            //     let sub = this.parseSubStatement(current);
+            //     if (sub == 'rejected') { break ParserCycle; } else ast.push(sub);
+            //     continue;
+            // }
 
-            if (Validator.isAddStatement(line)) {
-                let add = this.parseAddStatement(line);
-                if (add == 'rejected') { break ParserCycle; } else tokens.push(add);
-                continue;
-            }
+            // if (Validator.isCallStatement(current)) {
+            //     let call = this.parseCallStatement(current);
+            //     if (call == 'rejected') { break ParserCycle; } else ast.push(call);
+            //     continue;
+            // }
 
-            if (Validator.isSubStatement(line)) {
-                let sub = this.parseSubStatement(line);
-                if (sub == 'rejected') { break ParserCycle; } else tokens.push(sub);
-                continue;
-            }
+            // if (Validator.isEqualStatement(current)) {
+            //     let equal = this.parseEqualityStatement(current);
+            //     if (equal == 'rejected') { break ParserCycle; } else ast.push(equal);
+            //     continue;
+            // }
 
-            if (Validator.isCallStatement(line)) {
-                let call = this.parseCallStatement(line);
-                if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
-                continue;
-            }
+            // if (Validator.isDivStatement(current)) {
+            //     let div = this.parseDivStatement(current);
+            //     if (div == 'rejected') { break ParserCycle; } else ast.push(div);
+            //     continue;
+            // }
 
-            if (Validator.isEqualStatement(line)) {
-                let equal = this.parseEqualityStatement(line);
-                if (equal == 'rejected') { break ParserCycle; } else tokens.push(equal);
-                continue;
-            }
-
-            if (Validator.isDivStatement(line)) {
-                let div = this.parseDivStatement(line);
-                if (div == 'rejected') { break ParserCycle; } else tokens.push(div);
-                continue;
-            }
-
-            if (Validator.isModStatement(line)) {
-                let mod = this.parseModStatement(line);
-                if (mod == 'rejected') { break ParserCycle; } else tokens.push(mod);
-                continue;
-            }
+            // if (Validator.isModStatement(current)) {
+            //     let mod = this.parseModStatement(current);
+            //     if (mod == 'rejected') { break ParserCycle; } else ast.push(mod);
+            //     continue;
+            // }
+            console.log(current);
+            throw "Can't parse: nothing matches";
         }
 
-        return tokens;
+        return ast;
     }
 
 
@@ -326,15 +325,19 @@ class Parser {
      * @param lineCode - The line of code that is being parsed
      * @returns An array of objects.
      */
-    static parseIssueStatement(lineCode) {
-        let smallAbstractSyntaxTree = {};
-        smallAbstractSyntaxTree['issue'] = {};
-        lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
-        if (lineCode.split(' ').length > 2) return 'rejected';
-        const [IssueToken, IssueStatus] = lineCode.split(' ');
-        Lexer.lexerBool(lineCode, IssueStatus);
-        smallAbstractSyntaxTree['issue']['state'] = IssueStatus || 'on';
-        return smallAbstractSyntaxTree;
+    static parseIssueStatement(tokens) {
+        let subAst = {
+            type: 'issue',
+            state: false
+        };
+        if (tokens[0].type != 'keyword' || tokens[0].keyword != '@issue') {
+            return [null, tokens];
+        }
+        if (tokens[1].type != 'literal' || typeof tokens[1].value != 'boolean') {
+            throw `Expecter bool literal but got ${tokens[1].type}`;
+        }
+        subAst.state = tokens[1].value;
+        return [subAst, tokens.slice(2)];
     }
 
 
@@ -478,23 +481,56 @@ class Parser {
 
     /**
      * It takes a string, and returns an array of three strings.
-     * @param lineCode - the line of code that is being parsed
+     * @param tokens - the line of code that is being parsed
      * @returns An array of three elements.
      */
-    static parseUnitStatement(lineCode) {
-        let smallAbstractSyntaxTree = {};
-        smallAbstractSyntaxTree['unit'] = {};
-        lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
-        if (typeof lineCode !== 'string' || lineCode.length === 0) return 'rejected';
-        const unitName = lineCode.substring(lineCode.indexOf(' ') + 1, lineCode.indexOf('(')).trim();
-        const unitArguments = lineCode.substring(lineCode.indexOf('('), lineCode.indexOf(')') + 1);
-        const argsRules = this.parseTypesArgumentsUnit(unitArguments.slice(1, -1));
-        const argsNames = this.parseNamesArgumentsUnit(unitArguments.slice(1, -1));
-        smallAbstractSyntaxTree['unit']['name'] = unitName;
-        smallAbstractSyntaxTree['unit']['args'] = unitArguments;
-        smallAbstractSyntaxTree['unit']['argsnames'] = argsNames;
-        smallAbstractSyntaxTree['unit']['rules'] = { ...argsRules };
-        return smallAbstractSyntaxTree;
+    static parseUnitStatement(tokens) {
+        let subAst = {
+            type: 'unit',
+            name: '',
+            arguments: [],
+            body: []
+        };
+        if (tokens[0].type != 'keyword' || tokens[0].keyword != '@unit') {
+            return [null, tokens];
+        }
+        if (tokens[1].type != 'identifier') {
+            throw `Identifier expected but ${tokens[1].type} found`;
+        }
+        subAst.name = tokens[1].text;
+        if (tokens[2].type != 'lparen') {
+            throw `Parenthesis expected but ${tokens[2].type} found`;
+        }
+        let current = 2;
+        while (true) {
+            if (tokens[current].type != 'identifier') {
+                throw `Identifier expected but ${tokens[current].type} found`;
+            }
+            if (tokens[current + 1].type != 'colon') {
+                throw `Colon expected but ${tokens[current + 1].type} found`;
+            }
+            if (tokens[current + 2].type != 'identifier') {
+                throw `Identifier expected but ${tokens[current + 2].type} found`;
+            }
+            subAst.arguments.push({
+                name: tokens[current],
+                type: tokens[current + 2]
+            })
+            if (tokens[current + 3].type == 'rparen') {
+                current += 4;
+                break;
+            }
+            if (tokens[current + 3].type == 'comma') {
+                current += 4;
+                continue;
+            }
+            throw `Expected colon or parenthesis but ${tokens[current + 3].type} found`;
+        }
+        if (tokens[current].type != 'colon') {
+            throw `Expected colon but ${tokens[current + 3].type} found`;
+        }
+        current += 1;
+        return [subAst, tokens.slice(current)];
     }
 }
 
