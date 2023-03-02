@@ -24,8 +24,6 @@ class Parser {
 
         ParserCycle: for (let index = 0; index < lines.length; index++) {
             const line = lines[index].trim();
-          //  line.indexOf('#') === 0 ? instructions.push(line) : false;
-          //  line.indexOf('#') >= 0  ? instructions.push(line.substring(0, line.indexOf('#'))) : false;
 
             if (line.length === 0) continue;
 
@@ -35,13 +33,13 @@ class Parser {
                 let unitBody = [];
                 if (unit == 'rejected' || line.length === 0) break ParserCycle;
                 let fixedLine = index;
-                
+
                 UnitCycle: for (let idx = fixedLine, len = lines.length; idx < len; idx++) {
                     let lineUnit = lines[idx].trim();
                     if (lineUnit.length === 0) break UnitCycle
                     else unitBody.push(lineUnit), lines[idx] = '';
                 }
-                
+
                 tokens.push({ unit: unitBody });
                 isInterpreteProccess.setState(true);
                 continue;
@@ -61,85 +59,85 @@ class Parser {
 
             if (isInterpreteProccess.state && Validator.isCallStatement(line)) {
                 let call = this.parseCallStatement(line);
-                if (call == 'rejected'){ break ParserCycle; } else tokens.push(call);
+                if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isIssueStatement(line)) {
                 let issue = this.parseIssueStatement(line);
-                if (issue == 'rejected'){ break ParserCycle; } else tokens.push(issue); 
+                if (issue == 'rejected') { break ParserCycle; } else tokens.push(issue);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isSetDeclaration(line)) {
                 let set = this.parseSetStatement(line)
-                if (set == 'rejected'){ break ParserCycle; } else tokens.push(set);
+                if (set == 'rejected') { break ParserCycle; } else tokens.push(set);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isInvokeStatement(line)) {
                 let invoke = this.parseInvokeStatement(line);
-                if (invoke == 'rejected'){ break ParserCycle; } else tokens.push(invoke);
+                if (invoke == 'rejected') { break ParserCycle; } else tokens.push(invoke);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isMemoryInvokeStatement(line)) {
                 let memory = this.parseMemoryInvoke(line);
-                if (memory == 'rejected'){ break ParserCycle; } else  tokens.push(memory);
+                if (memory == 'rejected') { break ParserCycle; } else tokens.push(memory);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isAddressInvokeStatement(line)) {
                 let address = this.parseAddressInvoke(line);
-                if (address == 'rejected'){ break ParserCycle; } else tokens.push(address);
+                if (address == 'rejected') { break ParserCycle; } else tokens.push(address);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isRouteStatement(line)) {
                 let route = this.parseRouteStatement(line);
-                if (route == 'rejected'){ break ParserCycle; } else tokens.push(route);
+                if (route == 'rejected') { break ParserCycle; } else tokens.push(route);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isStackStatement(line)) {
                 let stack = this.parseStackStatement(line);
-                if (stack == 'rejected'){ break ParserCycle; } else tokens.push(stack);
+                if (stack == 'rejected') { break ParserCycle; } else tokens.push(stack);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isAddStatement(line)) {
                 let add = this.parseAddStatement(line);
-                if (add == 'rejected'){ break ParserCycle; } else tokens.push(add);
+                if (add == 'rejected') { break ParserCycle; } else tokens.push(add);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isSubStatement(line)) {
                 let sub = this.parseSubStatement(line);
-                if (sub == 'rejected'){ break ParserCycle; } else tokens.push(sub);
+                if (sub == 'rejected') { break ParserCycle; } else tokens.push(sub);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isCallStatement(line)) {
                 let call = this.parseCallStatement(line);
-                if (call == 'rejected'){ break ParserCycle; } else tokens.push(call);
+                if (call == 'rejected') { break ParserCycle; } else tokens.push(call);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isEqualStatement(line)) {
                 let equal = this.parseEqualityStatement(line);
-                if (equal == 'rejected'){ break ParserCycle; } else tokens.push(equal);
+                if (equal == 'rejected') { break ParserCycle; } else tokens.push(equal);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isDivStatement(line)) {
                 let div = this.parseDivStatement(line);
-                if (div == 'rejected'){ break ParserCycle; } else tokens.push(div);
+                if (div == 'rejected') { break ParserCycle; } else tokens.push(div);
                 continue;
             }
 
             if (isInterpreteProccess.state && Validator.isModStatement(line)) {
                 let mod = this.parseModStatement(line);
-                if (mod == 'rejected'){ break ParserCycle; } else tokens.push(mod);
+                if (mod == 'rejected') { break ParserCycle; } else tokens.push(mod);
                 continue;
             }
         }
@@ -148,14 +146,14 @@ class Parser {
     }
 
 
-    static parseImportStatement(lineCode){
+    static parseImportStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['import'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         const [ImportToken, Alias] = lineCode.split(' ');
         if (lineCode.split(' ').length > 2) return 'rejected';
         if (Alias == undefined) { process.stdout.write('Alias not defined'); return 'rejected'; }
-        else  smallAbstractSyntaxTree['import']['alias'] = Alias;
+        else smallAbstractSyntaxTree['import']['alias'] = Alias;
         return smallAbstractSyntaxTree;
     }
 
@@ -166,14 +164,14 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns a small abstract syntax tree.
      */
-    static parseReturnStatement(lineCode){
+    static parseReturnStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['ret'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         const [RetToken, RetAddress] = lineCode.split(' ');
         if (lineCode.split(' ').length > 2) return 'rejected';
         if (RetAddress == undefined) console.error('Invoke address not found');
-        else  smallAbstractSyntaxTree['ret']['arg'] = RetAddress;
+        else smallAbstractSyntaxTree['ret']['arg'] = RetAddress;
         return smallAbstractSyntaxTree;
     }
 
@@ -188,7 +186,7 @@ class Parser {
         smallAbstractSyntaxTree['div'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         if (lineCode.split(' ').length > 6) return 'rejected';
-        let  args =  lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
+        let args = lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
         args = args.map(arg => arg.indexOf(' ') > -1 ? arg.split(' ')[1] : arg);
         args.map(arg => ValidatorByType.validateTypeHex(arg));
         smallAbstractSyntaxTree['div']['args'] = args;
@@ -206,7 +204,7 @@ class Parser {
         smallAbstractSyntaxTree['mod'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         if (lineCode.split(' ').length > 6) return 'rejected';
-        let  args =  lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
+        let args = lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
         args = args.map(arg => arg.indexOf(' ') > -1 ? arg.split(' ')[1] : arg);
         args.map(arg => ValidatorByType.validateTypeHex(arg));
         smallAbstractSyntaxTree['mod']['args'] = args;
@@ -226,7 +224,7 @@ class Parser {
         smallAbstractSyntaxTree['equal'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         if (lineCode.split(' ').length > 6) return 'rejected';
-        let  args =  lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
+        let args = lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
         args = args.map(arg => arg.indexOf(' ') > -1 ? arg.split(' ')[1] : arg);
         smallAbstractSyntaxTree['equal']['args'] = args;
         return smallAbstractSyntaxTree;
@@ -239,12 +237,12 @@ class Parser {
      * @param lineCode - the line of code that is being parsed
      * @returns an object.
      */
-    static parseAddStatement(lineCode){
+    static parseAddStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['add'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         if (lineCode.split(' ').length > 6) return 'rejected';
-        let  args =  lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
+        let args = lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
         args = args.map(arg => arg.indexOf(' ') > -1 ? arg.split(' ')[1] : arg);
         args.map(arg => ValidatorByType.validateTypeHex(arg));
         smallAbstractSyntaxTree['add']['args'] = args;
@@ -258,7 +256,7 @@ class Parser {
      * @param lineCode - the line of code that is being parsed
      * @returns a small abstract syntax tree.
      */
-    static parseCallStatement(lineCode){
+    static parseCallStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['call'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -277,12 +275,12 @@ class Parser {
      * @returns An object with a key of 'sub' and a value of an object with a key of 'args' and a value
      * of an array of arguments.
      */
-    static parseSubStatement(lineCode){
+    static parseSubStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['sub'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         if (lineCode.split(' ').length > 6) return 'rejected';
-        let  args =  lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
+        let args = lineCode.indexOf(',') > -1 ? lineCode.split(',') : lineCode.split(' ');
         args = args.map(arg => arg.indexOf(' ') > -1 ? arg.split(' ')[1] : arg);
         args.map(arg => ValidatorByType.validatorTypeHex(arg));
         smallAbstractSyntaxTree['sub']['args'] = args;
@@ -295,7 +293,7 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns An object with a key of route and a value of an object with keys of name and address.
      */
-    static parseRouteStatement(lineCode){
+    static parseRouteStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['route'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -320,7 +318,7 @@ class Parser {
      * @returns an object with a key of 'stack' and a value of an object with a key of 'address' and a
      * value of the stack address.
      */
-    static parseStackStatement(lineCode){
+    static parseStackStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['stack'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -343,7 +341,7 @@ class Parser {
      * @param lineCode - The line of code that is being parsed
      * @returns An array of objects.
      */
-    static parseIssueStatement(lineCode){
+    static parseIssueStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['issue'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -360,9 +358,9 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns The line of code with all the empty characters removed.
      */
-    static parseAndDeleteEmptyCharacters(lineCode){
+    static parseAndDeleteEmptyCharacters(lineCode) {
         lineCode = lineCode.replace(/\s+/g, ' ').trim();
-        return  lineCode.substring(0, lineCode.indexOf('#') >= 0 ? lineCode.indexOf('#') -1 : lineCode.length);
+        return lineCode.substring(0, lineCode.indexOf('#') >= 0 ? lineCode.indexOf('#') - 1 : lineCode.length);
     }
 
 
@@ -373,7 +371,7 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns An array of objects.
      */
-    static parseSetStatement(lineCode){
+    static parseSetStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['set'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -402,7 +400,7 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns An array of objects.
      */
-    static parseInvokeStatement(lineCode){
+    static parseInvokeStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['invoke'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
@@ -415,7 +413,7 @@ class Parser {
         }
 
         if (InvokeAddress == undefined) console.error('Invoke address not found');
-        else  smallAbstractSyntaxTree['invoke']['address'] = InvokeAddress;
+        else smallAbstractSyntaxTree['invoke']['address'] = InvokeAddress;
         return smallAbstractSyntaxTree;
     }
 
@@ -425,7 +423,7 @@ class Parser {
      * </code>
      * @param lineCode - The line of code that is being parsed.
      */
-    static parseMemoryInvoke(lineCode){
+    static parseMemoryInvoke(lineCode) {
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
         const [memoryToken, memoryValue, memoryAddress] = lineCode.split(' ');
         if (lineCode.split(' ').length > 3) return 'rejected';
@@ -438,8 +436,8 @@ class Parser {
         Lexer.lexerMemoryAddress(lineCode, memoryAddress);
         return { memory: { name: memoryValue, address: memoryAddress } };
     }
-    
-        
+
+
     /**
      * It takes a string, finds the first and last parentheses, and returns an object with the string
      * between the parentheses as the ref property and the string after the last parentheses as the
@@ -447,9 +445,9 @@ class Parser {
      * @param lineCode - The line of code that is being parsed.
      * @returns An object with two properties: ref and addressVal.
      */
-    static parseAddressInvoke(lineCode){
+    static parseAddressInvoke(lineCode) {
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
-        if (lineCode.indexOf('(')  !== -1 && lineCode.indexOf(')') !== -1){
+        if (lineCode.indexOf('(') !== -1 && lineCode.indexOf(')') !== -1) {
             const addressName = lineCode.substring(lineCode.indexOf('('), lineCode.lastIndexOf(')')).trim();
             const address = lineCode.substring(lineCode.lastIndexOf(')')).trim();
             return { address: { name: addressName, address: address } };
@@ -498,7 +496,7 @@ class Parser {
      * @param lineCode - the line of code that is being parsed
      * @returns An array of three elements.
      */
-    static parseUnitStatement(lineCode){
+    static parseUnitStatement(lineCode) {
         let smallAbstractSyntaxTree = {};
         smallAbstractSyntaxTree['unit'] = {};
         lineCode = this.parseAndDeleteEmptyCharacters(lineCode);
